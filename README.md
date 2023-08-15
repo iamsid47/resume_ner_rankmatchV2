@@ -48,10 +48,12 @@ Send a POST request to http://localhost:5000/process_data with the following par
 - job_description: The job description PDF file.
 - resume_files[]: An array of resume PDF files.
 
-Configuration
+## Configuration
+
 The app.py file contains configuration options for different similarity metrics and their weights. You can adjust these weights and metrics to fine-tune the scoring process.
 
 The output_folder variable defines the directory where temporary files and processed text files will be stored.
 
-Notes
+## Notes
+
 The response time of the API is logged and provided in the JSON response.
