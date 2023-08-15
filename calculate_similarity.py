@@ -5,7 +5,7 @@
 # import spacy
 # from simhash import Simhash
 
-
+# IF CUDA UNAVAILABLE, USE THE BELOW CODE:
 
 # def calculate_tfidf_similarity(text1, text2):
 #     tfidf_vectorizer = TfidfVectorizer()
@@ -42,7 +42,7 @@
 # def calculate_simhash_similarity(text1, text2):
 #     hash1 = Simhash(text1)
 #     hash2 = Simhash(text2)
-#     similarity = 1 - (hash1.distance(hash2) / 64)  # Normalize the distance to similarity
+#     similarity = 1 - (hash1.distance(hash2) / 64)  
 #     return similarity
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -96,7 +96,7 @@ def calculate_spacy_similarity(text1, text2, model_name):
 def calculate_simhash_similarity(text1, text2):
     hash1 = Simhash(text1)
     hash2 = Simhash(text2)
-    similarity = 1 - (hash1.distance(hash2) / 64)  # Normalize the distance to similarity
+    similarity = 1 - (hash1.distance(hash2) / 64)  
     return similarity
 
 
