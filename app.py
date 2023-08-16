@@ -11,7 +11,7 @@ from pdfplumber import open as pdf_open
 from calculate_similarity import calculate_tfidf_similarity, calculate_sentence_transformer_similarity, calculate_levenshtein_similarity, calculate_bert_similarity as calculate_euclidean_similarity, calculate_spacy_similarity, calculate_simhash_similarity
 from flask_cors import CORS
 import time
-
+from calculate_similarity import extract_ner_from_cvs
 
 app = Flask(__name__)
 CORS(app)
@@ -69,6 +69,8 @@ def process_data():
 
         print("Input files done")
         
+       
+        cv_texts = []
         result = []
         
         for resume_file in resume_files:
@@ -83,6 +85,7 @@ def process_data():
             resume_file.save(resume_path)
             
             resume_text = pdf_to_text(resume_path)
+            cv_texts.append(resume_text)
             
             preprocessed_resume_text = preprocess_text(resume_text)
             
@@ -106,17 +109,17 @@ def process_data():
             weight_sentence_transformer = 0.07
             weight_levenshtein = 0.045
             weight_euclidean = 0.01
-            weight_spacy = 0.63
+            weight_spacy = 0.64
             weight_simhash = 0.175
 
             ensemble_score = (
                 (tfidf_similarity * weight_tfidf)
                 + (sentence_transformer_similarity * weight_sentence_transformer)
                 + (levenshtein_similarity * weight_levenshtein)
-                + (euclidean_similarity * weight_euclidean)
+                # + (euclidean_similarity * weight_euclidean)
                 + (spacy_similarity * weight_spacy)
                 + (simhash_similarity * weight_simhash)
-            ) / (weight_tfidf + weight_sentence_transformer + weight_levenshtein + weight_euclidean + weight_spacy + weight_simhash)
+            ) / (weight_tfidf + weight_sentence_transformer + weight_levenshtein  + weight_spacy + weight_simhash)
 
             print("FILE NAME: ", resume_filename)
             print("TF-IDF Similarity:", tfidf_similarity)
@@ -133,18 +136,22 @@ def process_data():
             result.append({
                 'resume_filename': resume_filename,
                 'ensemble_score': ranked_score,
+                
 
             })
+        
+        ner_results = extract_ner_from_cvs(cv_texts)
 
         result.sort(key=lambda x: x['ensemble_score'], reverse=True)
 
         
         ranked_result = []
-        for rank, data in enumerate(result, start=1):
+        for rank, (data, ner_result) in enumerate(zip(result, ner_results), start=1):
             ranked_result.append({
                 'rank': rank,
                 'resume_filename': data['resume_filename'],
                 'ensemble_score': data['ensemble_score'],
+                'ner_output': ner_result
             })
 
 

@@ -99,6 +99,14 @@ def calculate_simhash_similarity(text1, text2):
     similarity = 1 - (hash1.distance(hash2) / 64)  
     return similarity
 
-
-
+def extract_ner_from_cvs(cv_texts):
+    nlp = spacy.load("D:/CVNER/archive/output/model-best")
+    
+    ner_results = []
+    for cv_text in cv_texts:
+        doc = nlp(cv_text)
+        ner_info = [{"text": ent.text, "label": ent.label_} for ent in doc.ents]
+        ner_results.append(ner_info)
+    
+    return ner_results
 
