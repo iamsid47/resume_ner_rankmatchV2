@@ -94,7 +94,7 @@ def process_data():
             levenshtein_similarity = calculate_levenshtein_similarity(job_description_text, preprocessed_resume_text)
             euclidean_similarity = calculate_euclidean_similarity(job_description_text, preprocessed_resume_text)
             simhash_similarity = calculate_simhash_similarity(job_description_text, preprocessed_resume_text)
-            spacy_similarity = calculate_spacy_similarity(job_description_text, preprocessed_resume_text, 'en_core_web_lg')
+            spacy_similarity = calculate_spacy_similarity(job_description_text, preprocessed_resume_text)
             
   
 
@@ -120,6 +120,13 @@ def process_data():
                 + (spacy_similarity * weight_spacy)
                 + (simhash_similarity * weight_simhash)
             ) / (weight_tfidf + weight_sentence_transformer + weight_levenshtein  + weight_spacy + weight_simhash)
+
+            # print("Spacy * Weight: " + str(spacy_similarity * weight_spacy))
+
+            if (spacy_similarity) > 0.80:
+                ensemble_score = (spacy_similarity) - 0.05
+            elif (spacy_similarity) < 0.05:
+                ensemble_score = 0.01
 
             print("FILE NAME: ", resume_filename)
             print("TF-IDF Similarity:", tfidf_similarity)
